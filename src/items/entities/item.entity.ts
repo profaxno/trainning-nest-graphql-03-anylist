@@ -6,7 +6,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class Item {
   
   @PrimaryGeneratedColumn('uuid')
-  @Field( () => ID)
+  @Field(() => ID)
   id: string;
 
   @Column({unique: true})
