@@ -8,17 +8,37 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { ItemsModule } from './items/items.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
 
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync({
       driver: ApolloDriver,
-      autoSchemaFile: join( process.cwd(), 'src/schema.gql'),
-      playground: false,
-      plugins: [ApolloServerPluginLandingPageLocalDefault()]
+      imports: [AuthModule],
+      inject: [JwtService],
+      useFactory: async( jwtService: JwtService) => ({
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        playground: false,
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        context: ({ req }) => {
+          const token = req.headers.authorization.split(' ')[1];
+          if(!token) throw new Error('Token not found');
+
+          const payload = jwtService.decode(token);
+          if(!payload) throw new Error('Invalid token');
+        }
+      })
     }),
+
+    //! TIPS: Configuracion GraphQLModule basica
+    // GraphQLModule.forRoot<ApolloDriverConfig>({
+    //   driver: ApolloDriver,
+    //   autoSchemaFile: join( process.cwd(), 'src/schema.gql'),
+    //   playground: false,
+    //   plugins: [ApolloServerPluginLandingPageLocalDefault()]
+    // }),
 
     TypeOrmModule.forRoot({
       type: 'postgres',
