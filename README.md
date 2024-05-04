@@ -10,4 +10,4 @@
 5. Ejecutar ```npm install```
 6. Levantar db ```docker-compose up -d```
 7. Ejecutar la app en dev: ```npm run start:dev```
-8. Reconstruir la base de datos ```localhost:3000/api/seed```
+8. Reconstruir la base de datos ejecutar la _mutation_ ```executeSeed```

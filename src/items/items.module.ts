@@ -9,5 +9,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     TypeOrmModule.forFeature([Item])
   ],
+  exports: [
+    ItemsService,
+    TypeOrmModule //! tips: Se exporta solo si se necesita inyectar el itemRepository en otro module
+  ]
 })
 export class ItemsModule {}
